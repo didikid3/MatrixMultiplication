@@ -1,0 +1,132 @@
+
+public class StrassenMethod {
+	//Assuming both matrix are squares (n,n)
+		public static int[][] productOfMatrix(int[][] x, int [][] y){
+
+			return productHelper(x,y);
+		}
+		
+		public static int[][] productHelper(int[][] x,int[][] y)
+		{
+			int size = x.length;
+			int[][] result = new int[size][size];
+			
+			if (size == 1) {
+				result[0][0] = x[0][0] * y[0][0];
+			}
+			else {
+				int[][] p1 = new int[size/2][size/2];
+				int[][] p2 = new int[size/2][size/2];
+				int[][] p3 = new int[size/2][size/2];
+				int[][] p4 = new int[size/2][size/2];
+				int[][] p5 = new int[size/2][size/2];
+				int[][] p6 = new int[size/2][size/2];
+				int[][] p7 = new int[size/2][size/2];
+				
+				int[][] c11 = new int[size/2][size/2];
+				int[][] c12 = new int[size/2][size/2];
+				int[][] c21 = new int[size/2][size/2];
+				int[][] c22 = new int[size/2][size/2];
+				
+				//X11 * (Y12 - Y22)
+				p1 = productHelper(
+						subArray(x,0,0), 
+						addMatrix(p1, subArray(y,0,1), subArray(y,1,1),
+								0, 0, size/2, -1)
+						);
+				
+				//(X11 + X12) * Y22
+				p2 = productHelper( 
+						addMatrix(p2, subArray(x,0,0), subArray(x,0,1),
+								0, 0, size/2, 1),
+						subArray(y,1,1)
+						);
+				
+				//(X21 + X22) * Y11
+				p3 = productHelper( 
+						addMatrix(p3, subArray(x,1,0), subArray(x,0,1),
+								0, 0, size/2, 1),
+						subArray(y,0,0)
+						);
+				
+				//X22 * (Y21 - Y11)
+				p4 = productHelper(
+						subArray(x,1,1), 
+						addMatrix(p4, subArray(y,1,0), subArray(y,0,0),
+								0, 0, size/2, -1)
+						);
+				
+				//These might have errors by using the same result array
+				//For assignment of addition Check later
+	
+				//(X11 + X22) * (Y11 + Y22)
+				p5 = productHelper(
+						addMatrix(p5, subArray(x,0,0), subArray(x,1,1),
+								0, 0, size/2, 1), 
+						addMatrix(p5, subArray(y,0,0), subArray(y,1,1),
+								0, 0, size/2, 1)
+						);
+				
+				//(X12 - X22) * (Y21 + Y22)
+				p6 = productHelper(
+						addMatrix(p6, subArray(x,0,1), subArray(x,1,1),
+								0, 0, size/2, -1), 
+						addMatrix(p6, subArray(y,1,0), subArray(y,1,1),
+								0, 0, size/2, 1)
+						);
+				
+				//(X11 - X21) * (Y11 + Y12)
+				p7 = productHelper(
+						addMatrix(p7, subArray(x,0,0), subArray(x,1,0),
+								0, 0, size/2, -1), 
+						addMatrix(p7, subArray(y,0,0), subArray(y,0,1),
+								0, 0, size/2, 1)
+						);
+				
+				//Combine C's into final result array
+				//Use the addMatrixMethod Positioning to get the correct location
+				
+				
+			}
+			
+			return result;
+		}
+		
+		public static int[][] subArray(int[][] a, int x, int y) {
+			int size = a.length / 2;
+			int[][] result = new int[size][size];
+			for(int i = x*size; i < (x*size)+size; i++) {
+				for(int j = y*size; j < (y*size)+size; j++) {
+					result[i-x*size][j-y*size] = a[i][j];
+				}
+			}
+			
+			return result;
+		}
+		
+		public static int[][] addMatrix(int[][] x, int[][] y,
+				int row, int col, int size, int subtract) {
+			int[][] result = new int[x.length][x.length];
+			for( int i = row; i < row+size; i++) {
+				for( int j = col; j < col+size; j++) {
+					result[i][j] = x[i][j] + (subtract * y[i][j]);
+				}
+			}
+			
+			return result;
+		}
+		public static void main(String[] args) {
+			int[][] firstMatrix = { {1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 16} };
+	        int[][] secondMatrix = { {1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 16} };
+
+	        int [][] result = productOfMatrix(firstMatrix, secondMatrix);
+
+	        for(int i = 0; i < result.length; i++) {
+	        	for(int j = 0; j < result.length; j++) {
+	        		System.out.print(result[i][j] + "\t");
+	        	}
+	        	System.out.println();
+	        }
+
+		}
+}
